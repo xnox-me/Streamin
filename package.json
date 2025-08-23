@@ -1,0 +1,45 @@
+{
+  "name": "obs-multistream",
+  "version": "1.0.0",
+  "description": "A multistream application for OBS to broadcast to multiple platforms simultaneously",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "docker:build": "docker build -t obs-multistream .",
+    "docker:run": "docker run -p 1935:1935 -p 3000:3000 obs-multistream"
+  },
+  "keywords": [
+    "obs",
+    "multistream",
+    "rtmp",
+    "streaming",
+    "broadcast",
+    "twitch",
+    "youtube",
+    "facebook"
+  ],
+  "author": "StreaminDoDo Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-media-server": "^2.6.8",
+    "ws": "^8.14.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "dotenv": "^16.3.1",
+    "joi": "^17.11.0",
+    "winston": "^3.11.0",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

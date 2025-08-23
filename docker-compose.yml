@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  obs-multistream:
+    build: .
+    container_name: obs-multistream
+    restart: unless-stopped
+    ports:
+      - "3000:3000"   # Web dashboard
+      - "1935:1935"   # RTMP input
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - RTMP_PORT=1935
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    networks:
+      - multistream-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a reverse proxy (nginx) for production
+  nginx:
+    image: nginx:alpine
+    container_name: obs-multistream-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - obs-multistream
+    networks:
+      - multistream-network
+    profiles:
+      - proxy
+
+networks:
+  multistream-network:
+    driver: bridge
+
+volumes:
+  multistream-logs:
+  multistream-config:

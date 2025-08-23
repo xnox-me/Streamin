@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Multistream Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 OBS Multistream Dashboard</h1>
+            <div class="connection-status">
+                <span id="connection-indicator" class="status-indicator offline">●</span>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Stream Configuration -->
+            <section class="card">
+                <h2>📺 Stream Configuration</h2>
+                <div class="stream-info">
+                    <div class="info-item">
+                        <label>RTMP Endpoint:</label>
+                        <code id="rtmp-endpoint">rtmp://localhost:1935/live/YOUR_STREAM_KEY</code>
+                        <button class="btn-copy" onclick="copyToClipboard('rtmp-endpoint')">📋 Copy</button>
+                    </div>
+                    <div class="info-item">
+                        <label>Stream Key:</label>
+                        <input type="text" id="stream-key" placeholder="Enter your stream key" class="form-input">
+                        <button class="btn btn-primary" onclick="updateStreamKey()">Update</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Platform Status -->
+            <section class="card">
+                <h2>🌐 Platform Status</h2>
+                <div id="platforms-grid" class="platforms-grid">
+                    <!-- Platforms will be loaded dynamically -->
+                </div>
+                <div id="no-platforms" class="no-data" style="display: none;">
+                    <p>⚠️ No streaming platforms configured.</p>
+                    <p>Please set up your .env file with platform credentials.</p>
+                </div>
+            </section>
+
+            <!-- Active Streams -->
+            <section class="card">
+                <h2>📡 Active Streams</h2>
+                <div id="streams-container">
+                    <div id="no-streams" class="no-data">
+                        <p>🔴 No active streams</p>
+                        <p>Start streaming in OBS to see streams here.</p>
+                    </div>
+                    <div id="streams-list"></div>
+                </div>
+            </section>
+
+            <!-- Stream Controls -->
+            <section class="card">
+                <h2>🎛️ Manual Stream Control</h2>
+                <div class="stream-controls">
+                    <div class="control-group">
+                        <label for="manual-stream-key">Stream Key:</label>
+                        <input type="text" id="manual-stream-key" placeholder="Enter stream key" class="form-input">
+                    </div>
+                    <div class="control-group">
+                        <label for="manual-input-path">Input Path:</label>
+                        <input type="text" id="manual-input-path" placeholder="rtmp://localhost:1935/live/key" class="form-input">
+                    </div>
+                    <div class="control-buttons">
+                        <button class="btn btn-success" onclick="startManualStream()">▶️ Start Stream</button>
+                        <button class="btn btn-danger" onclick="stopManualStream()">⏹️ Stop Stream</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Server Stats -->
+            <section class="card">
+                <h2>📊 Server Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="active-streams-count">0</div>
+                        <div class="stat-label">Active Streams</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="enabled-platforms-count">0</div>
+                        <div class="stat-label">Enabled Platforms</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="server-uptime">0s</div>
+                        <div class="stat-label">Server Uptime</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-data-sent">0 MB</div>
+                        <div class="stat-label">Data Sent</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>🚀 OBS Multistream Server v1.0.0 | Made with ❤️ for streamers</p>
+        </footer>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
