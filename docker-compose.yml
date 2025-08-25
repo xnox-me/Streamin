@@ -12,19 +12,93 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - RTMP_PORT=1935
+      - RASA_API_URL=http://rasa-chatbot:5005
+      - REDIS_HOST=redis
+      - CHATBOT_ENABLED=true
     env_file:
       - .env
     volumes:
       - ./logs:/app/logs
       - ./config:/app/config
+      - ./data:/app/data
     networks:
       - multistream-network
+    depends_on:
+      - redis
+      - rasa-chatbot
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # RASA Chatbot Service
+  rasa-chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile.rasa
+    container_name: rasa-chatbot
+    restart: unless-stopped
+    ports:
+      - "5005:5005"   # RASA API
+      - "5055:5055"   # RASA Actions
+    environment:
+      - RASA_X_PASSWORD=password
+      - RASA_X_TOKEN=rasaXToken
+    volumes:
+      - ./rasa:/app
+      - ./logs/rasa:/app/logs
+      - rasa-models:/app/models
+    networks:
+      - multistream-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Redis for message queuing and caching
+  redis:
+    image: redis:7-alpine
+    container_name: multistream-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - multistream-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # PostgreSQL database (optional, for persistent storage)
+  postgres:
+    image: postgres:15-alpine
+    container_name: multistream-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=streamindodo
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - multistream-network
+    profiles:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Optional: Add a reverse proxy (nginx) for production
   nginx:
@@ -44,6 +118,27 @@ services:
     profiles:
       - proxy
 
+  # Development tools (optional)
+  rasa-x:
+    image: rasa/rasa-x:1.2.0
+    container_name: rasa-x
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
+    environment:
+      - RASA_X_PASSWORD=password
+      - RASA_USER_APP=http://rasa-chatbot:5005
+      - RASA_PRODUCTION_HOST=http://rasa-chatbot:5005
+    volumes:
+      - ./rasa:/app/projects/default
+      - rasa-x-data:/app/rasa-x
+    networks:
+      - multistream-network
+    depends_on:
+      - rasa-chatbot
+    profiles:
+      - development
+
 networks:
   multistream-network:
     driver: bridge
@@ -51,3 +146,7 @@ networks:
 volumes:
   multistream-logs:
   multistream-config:
+  redis-data:
+  postgres-data:
+  rasa-models:
+  rasa-x-data:

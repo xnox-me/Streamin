@@ -1,0 +1,51 @@
+# Dockerfile for RASA Chatbot Service
+FROM rasa/rasa:3.6.4-full
+
+# Set working directory
+WORKDIR /app
+
+# Copy RASA configuration files
+COPY rasa/ ./
+
+# Set environment variables
+ENV RASA_X_PASSWORD=password
+ENV RASA_X_TOKEN=rasaXToken
+ENV RASA_HOME=/app
+
+# Install additional dependencies if needed
+USER root
+RUN pip install --no-cache-dir \
+    redis \
+    pymongo \
+    psycopg2-binary
+
+# Switch back to rasa user
+USER 1001
+
+# Train the model
+RUN rasa train
+
+# Expose ports
+EXPOSE 5005 5055
+
+# Create entrypoint script
+USER root
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Start RASA action server in background\n\
+echo "Starting RASA action server..."\n\
+rasa run actions --port 5055 &\n\
+\n\
+# Wait a moment for action server to start\n\
+sleep 5\n\
+\n\
+# Start RASA server\n\
+echo "Starting RASA server..."\n\
+rasa run --enable-api --cors "*" --port 5005 --host 0.0.0.0\n\
+' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+USER 1001
+
+# Set entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]

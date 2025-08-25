@@ -1,0 +1,178 @@
+version: "3.1"
+
+# Intents - User intentions
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+  - ask_streaming_status
+  - ask_platform_status
+  - ask_help
+  - ask_about_stream
+  - ask_technical_support
+  - ask_chat_commands
+  - ask_viewer_count
+  - ask_stream_quality
+  - ask_donation_info
+  - ask_social_media
+  - ask_schedule
+  - request_song
+  - ask_game_info
+  - compliment_stream
+  - report_issue
+  - ask_moderator_help
+  - request_follow
+  - ask_about_streamer
+  - chitchat
+  - out_of_scope
+
+# Entities - Information to extract from user messages
+entities:
+  - platform
+  - stream_quality
+  - game_name
+  - social_platform
+  - issue_type
+  - username
+  - time_period
+
+# Slots - Memory for the conversation
+slots:
+  current_platform:
+    type: categorical
+    values:
+      - twitch
+      - youtube
+      - facebook
+      - instagram
+      - tiktok
+      - linkedin
+      - twitter
+      - discord
+      - telegram
+      - kick
+      - rumble
+      - odysee
+    mappings:
+      - type: from_entity
+        entity: platform
+
+  stream_status:
+    type: categorical
+    values:
+      - live
+      - offline
+      - starting
+      - ending
+    mappings:
+      - type: custom
+
+  user_mood:
+    type: categorical
+    values:
+      - happy
+      - sad
+      - neutral
+    mappings:
+      - type: custom
+
+  username:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: username
+
+# Responses - Bot replies
+responses:
+  utter_greet:
+    - text: "Hey there! 👋 Welcome to the StreaminDoDo multistream! How can I help you today?"
+    - text: "Hello! 🎬 I'm your streaming assistant. What would you like to know?"
+    - text: "Hi! 😊 Thanks for joining the stream. Need any help or have questions?"
+
+  utter_goodbye:
+    - text: "See you later! 👋 Thanks for watching the stream!"
+    - text: "Goodbye! 🎮 Hope you enjoyed the stream. Come back soon!"
+    - text: "Take care! 👍 Don't forget to follow for more awesome content!"
+
+  utter_affirm:
+    - text: "Great! 👍"
+    - text: "Awesome! ✅"
+    - text: "Perfect! 🎯"
+
+  utter_deny:
+    - text: "No problem! 👌"
+    - text: "That's okay! 😊"
+    - text: "Understood! 👍"
+
+  utter_mood_great:
+    - text: "That's fantastic! 😄 Glad you're enjoying the stream!"
+    - text: "Awesome to hear! 🎉 Your positive vibes make the stream even better!"
+
+  utter_mood_unhappy:
+    - text: "Sorry to hear that! 😔 Is there anything I can help with to improve your experience?"
+    - text: "Oh no! 😟 Let me know if there's anything specific bothering you about the stream."
+
+  utter_iamabot:
+    - text: "I'm StreaminDoDo's AI assistant! 🤖 I help manage the multistream chat across all platforms."
+    - text: "I'm an AI chatbot for this multistream! 🎬 I can answer questions and help with stream-related info."
+
+  utter_streaming_status:
+    - text: "🔴 Currently streaming live on multiple platforms! Check the dashboard for detailed status."
+    - text: "📡 We're live on several platforms right now! The stream is running smoothly across all channels."
+    - text: "🎥 Stream is active! Broadcasting to Twitch, YouTube, Facebook, and more simultaneously."
+
+  utter_platform_status:
+    - text: "📊 Platform Status:\n• Twitch: ✅ Live\n• YouTube: ✅ Live\n• Facebook: ✅ Live\n• Discord: 💬 Chat Active\n• Telegram: 💬 Chat Active"
+    - text: "🌐 All platforms are connected and streaming! Chat is active across multiple social media channels."
+
+  utter_help:
+    - text: "🤖 I can help you with:\n• Stream status and platform info\n• Technical support\n• Chat commands\n• Social media links\n• Stream schedule\n\nJust ask me anything!"
+    - text: "💡 Available commands:\n• Stream status\n• Platform information\n• Technical help\n• Social media\n• Schedule info\n\nWhat would you like to know?"
+
+  utter_technical_support:
+    - text: "🔧 Experiencing technical issues? Try:\n• Refreshing the stream\n• Checking your internet connection\n• Switching to a different quality setting\n\nIf problems persist, let the moderators know!"
+    - text: "⚙️ For technical issues:\n• Clear browser cache\n• Try a different browser\n• Check audio/video settings\n\nNeed more help? Tag a moderator!"
+
+  utter_chat_commands:
+    - text: "💬 Chat Commands:\n• !help - Show this help\n• !status - Stream status\n• !social - Social media links\n• !schedule - Stream schedule\n• !quality - Video quality options"
+
+  utter_social_media:
+    - text: "🌐 Follow us on:\n• Twitch: /streamindodo\n• YouTube: /streamindodo\n• Twitter: @streamindodo\n• Discord: discord.gg/streamindodo\n• Instagram: @streamindodo"
+
+  utter_stream_quality:
+    - text: "🎥 Stream Quality Options:\n• 1080p60 (Best)\n• 720p60 (High)\n• 480p30 (Medium)\n• 360p30 (Low)\n\nAdjust based on your connection!"
+
+  utter_compliment_response:
+    - text: "Thank you so much! 😊 Your support means everything!"
+    - text: "Aww, thanks! 🥰 Comments like yours make streaming so much fun!"
+    - text: "You're too kind! 💖 Glad you're enjoying the content!"
+
+  utter_out_of_scope:
+    - text: "🤔 I'm not sure about that, but I'm here to help with stream-related questions!"
+    - text: "💭 That's outside my expertise, but feel free to ask about the stream, platforms, or technical issues!"
+
+  utter_default:
+    - text: "🤖 I didn't quite understand that. Could you rephrase your question?"
+    - text: "💭 Sorry, I'm not sure what you mean. Try asking about the stream, platforms, or need help!"
+
+  utter_ask_rephrase:
+    - text: "🤔 Could you rephrase that? I want to make sure I give you the right information!"
+
+# Actions - Custom actions (will be implemented in Python)
+actions:
+  - action_get_stream_status
+  - action_get_platform_info
+  - action_get_viewer_count
+  - action_handle_technical_issue
+  - action_get_social_links
+  - action_get_stream_schedule
+  - action_log_user_interaction
+
+# Session configuration
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

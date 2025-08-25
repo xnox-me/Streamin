@@ -1,0 +1,71 @@
+# RASA Configuration for StreaminDoDo Chatbot
+
+# NLU Configuration
+language: en
+
+pipeline:
+  # Tokenization
+  - name: WhitespaceTokenizer
+  
+  # Featurization  
+  - name: RegexFeaturizer
+  - name: LexicalSyntacticFeaturizer
+  - name: CountVectorFeaturizer
+  - name: CountVectorFeaturizer
+    analyzer: char_wb
+    min_ngram: 1
+    max_ngram: 4
+
+  # Intent Classification
+  - name: DIETClassifier
+    epochs: 100
+    constrain_similarities: true
+    
+  # Entity Extraction
+  - name: EntitySynonymMapper
+  - name: ResponseSelector
+    epochs: 100
+    constrain_similarities: true
+    
+  # Fallback
+  - name: FallbackClassifier
+    threshold: 0.3
+    ambiguity_threshold: 0.1
+
+# Core Configuration
+policies:
+  # Memoization Policy
+  - name: MemoizationPolicy
+  
+  # Rule Policy for handling rules
+  - name: RulePolicy
+  
+  # Transformer Embedding Dialogue Policy
+  - name: TEDPolicy
+    max_history: 5
+    epochs: 100
+    constrain_similarities: true
+    
+  # Fallback Policy
+  - name: FallbackPolicy
+    
+# Assistant Configuration
+assistant_id: streamindodo_chatbot
+
+# API Configuration
+endpoints:
+  models:
+    url: http://localhost:5005/model
+  tracker_store:
+    type: InMemoryTrackerStore
+  event_broker:
+    type: pika
+    url: localhost
+    username: guest
+    password: guest
+    queue: rasa_core_events
+
+# Session Configuration
+session_config:
+  session_expiration_time: 60  # value in minutes
+  carry_over_slots_to_new_session: true

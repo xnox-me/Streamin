@@ -1,17 +1,48 @@
-# 🎬 OBS Multistream Server
+# 🎬 StreaminDoDo - Enhanced Multistream Server with AI Chatbot
 
-A powerful Node.js application that allows you to stream to multiple platforms simultaneously using OBS Studio. Stream to Twitch, YouTube, Facebook, and custom RTMP endpoints all at once!
+A powerful Node.js application that allows you to stream to multiple platforms simultaneously using OBS Studio, with integrated social media chat and AI-powered chatbot responses using RASA AI. Stream to Twitch, YouTube, Facebook, Instagram, TikTok, LinkedIn, Twitter/X, Discord, Telegram, and more - all while having an intelligent chatbot interact with your audience!
 
-## ✨ Features
+## ✨ Enhanced Features
 
-- 🎯 **Multi-Platform Streaming**: Stream to Twitch, YouTube, Facebook, and custom RTMP endpoints simultaneously
-- 🎛️ **Web Dashboard**: Beautiful real-time dashboard to monitor and control your streams
-- 📡 **RTMP Server**: Built-in RTMP server that accepts streams from OBS
-- 🔄 **Real-time Monitoring**: Live stream status, health monitoring, and error reporting
-- 🐳 **Docker Support**: Easy deployment with Docker and Docker Compose
-- 🛡️ **Security**: Rate limiting, security headers, and proper error handling
-- 📊 **Analytics**: Stream statistics, uptime tracking, and performance metrics
-- 🔧 **Manual Control**: Start/stop streams manually via the web interface
+### 🎯 **Multi-Platform Streaming**
+- Stream to **12+ platforms** simultaneously: Twitch, YouTube, Facebook, Instagram, TikTok, LinkedIn, Twitter/X, Discord, Telegram, Kick, Rumble, Odysee
+- Custom RTMP endpoints support
+- Real-time stream health monitoring
+- Auto-retry and failover mechanisms
+
+### 🤖 **AI-Powered Chatbot**
+- **RASA AI integration** for intelligent responses
+- Cross-platform chat monitoring and response
+- Contextual understanding and conversation memory
+- Customizable responses and training data
+- Real-time interaction analytics
+- Support for multiple languages
+
+### 💬 **Advanced Social Media Integration**
+- **Real-time chat monitoring** across all platforms
+- **Unified chat interface** in the web dashboard
+- **Automated responses** via AI chatbot
+- **Message history and analytics**
+- **Rate limiting and spam protection**
+- **Moderator tools and controls**
+
+### 🎛️ **Enhanced Web Dashboard**
+- Beautiful real-time dashboard with chat integration
+- Live stream status and health monitoring
+- **Chat message feed** from all platforms
+- **Chatbot interaction analytics**
+- **Platform connection status**
+- **Stream statistics and performance metrics**
+- **Social media engagement tracking**
+
+### 🛡️ **Enterprise Features**
+- Enhanced security with rate limiting
+- **Redis caching** for performance
+- **PostgreSQL support** for data persistence
+- **Docker containerization** with orchestration
+- **Comprehensive logging** and monitoring
+- **Health checks** and auto-recovery
+- **API rate limiting** and security headers
 
 ## 🚀 Quick Start
 
@@ -20,61 +51,214 @@ A powerful Node.js application that allows you to stream to multiple platforms s
 - Node.js 16+ (or Docker)
 - FFmpeg installed on your system
 - OBS Studio
-- Stream keys from your preferred platforms
+- Python 3.7+ (for RASA AI chatbot - optional)
+- Stream keys and API credentials from your preferred platforms
 
-### Option 1: Docker (Recommended)
+### Option 1: Enhanced Setup Script (Recommended)
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/eihabhala/StreaminDoDo.git
    cd StreaminDoDo
    ```
 
-2. **Set up environment variables**
+2. **Run the enhanced setup script**
    ```bash
-   cp .env.example .env
+   chmod +x setup-enhanced.sh
+   ./setup-enhanced.sh
    ```
-   Edit `.env` file with your streaming credentials:
+   
+   The script will:
+   - Check prerequisites
+   - Install dependencies
+   - Set up environment configuration
+   - Configure RASA AI chatbot (optional)
+   - Set up Docker deployment (optional)
+   - Guide you through platform configuration
+
+3. **Configure your credentials**
+   Edit the `.env` file with your streaming and social media credentials:
    ```env
-   # Twitch
+   # Streaming Platforms
    TWITCH_STREAM_KEY=your_twitch_stream_key_here
-   TWITCH_RTMP_URL=rtmp://live.twitch.tv/live/
-
-   # YouTube
+   TWITCH_CLIENT_ID=your_twitch_client_id
+   TWITCH_ACCESS_TOKEN=your_twitch_access_token
+   
    YOUTUBE_STREAM_KEY=your_youtube_stream_key_here
-   YOUTUBE_RTMP_URL=rtmp://a.rtmp.youtube.com/live2/
-
-   # Facebook
-   FACEBOOK_STREAM_KEY=your_facebook_stream_key_here
-   FACEBOOK_RTMP_URL=rtmps://live-api-s.facebook.com:443/rtmp/
+   YOUTUBE_API_KEY=your_youtube_api_key
+   
+   # Social Media Platforms
+   DISCORD_BOT_TOKEN=your_discord_bot_token
+   TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+   
+   # AI Chatbot
+   CHATBOT_ENABLED=true
+   RASA_API_URL=http://localhost:5005
    ```
 
-3. **Start with Docker Compose**
+4. **Start the application**
    ```bash
+   # Local development
+   npm start
+   
+   # Or with Docker
    docker-compose up -d
    ```
 
-4. **Access the dashboard**
-   - Open http://localhost:3000 in your browser
-   - RTMP endpoint: `rtmp://localhost:1935/live/YOUR_STREAM_KEY`
+### Option 2: Docker Compose (Production Ready)
 
-### Option 2: Local Installation
+1. **Quick deployment with all services**
+   ```bash
+   git clone https://github.com/eihabhala/StreaminDoDo.git
+   cd StreaminDoDo
+   cp .env.example .env
+   # Edit .env with your credentials
+   docker-compose up -d
+   ```
+
+2. **With database and full stack**
+   ```bash
+   docker-compose --profile database up -d
+   ```
+
+3. **Access services**
+   - **Main Dashboard**: http://localhost:3000
+   - **RASA API**: http://localhost:5005
+   - **Redis**: localhost:6379
+   - **PostgreSQL**: localhost:5432 (with database profile)
+
+### Option 3: Local Development Setup
 
 1. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. **Set up environment**
+2. **Set up RASA (optional)**
+   ```bash
+   pip install rasa
+   npm run setup:rasa
+   npm run rasa:train
+   ```
+
+3. **Set up environment**
    ```bash
    cp .env.example .env
    # Edit .env with your credentials
    ```
 
-3. **Start the server**
+4. **Start services**
    ```bash
+   # Terminal 1: Main application
    npm start
+   
+   # Terminal 2: RASA chatbot (if enabled)
+   npm run rasa:run
    ```
+
+## 🤖 AI Chatbot Configuration
+
+### RASA Setup
+
+The AI chatbot uses RASA for natural language understanding and response generation.
+
+#### Quick Setup with Docker
+```bash
+# Chatbot runs automatically with docker-compose
+docker-compose up -d
+```
+
+#### Local RASA Installation
+```bash
+# Install RASA
+pip install rasa
+
+# Train the model
+cd rasa
+rasa train
+
+# Start RASA server
+rasa run --enable-api --cors '*'
+
+# Start action server (in another terminal)
+rasa run actions
+```
+
+#### Customizing the Chatbot
+
+1. **Training Data**: Edit `rasa/data/nlu.yml` to add new intents and examples
+2. **Responses**: Modify `rasa/domain.yml` to customize bot responses
+3. **Actions**: Add custom actions in `rasa/actions/actions.py`
+4. **Configuration**: Adjust `rasa/config.yml` for different NLU pipelines
+
+#### Chatbot Features
+
+- ✨ **Intelligent Responses**: Context-aware conversations
+- 📊 **Analytics**: Track interactions and popular topics
+- 🌍 **Multi-language**: Support for multiple languages
+- 🛡️ **Moderation**: Automatic spam and toxicity detection
+- 📚 **Learning**: Continuously improves from interactions
+- ⚙️ **Customizable**: Easy to train for specific use cases
+
+## 🌍 Social Media Platform Configuration
+
+### Supported Platforms
+
+| Platform | Streaming | Chat | Setup Difficulty | API Required |
+|----------|-----------|------|------------------|-------------|
+| **Twitch** | ✅ | ✅ | Easy | Yes |
+| **YouTube** | ✅ | ✅ | Medium | Yes |
+| **Facebook** | ✅ | ✅ | Medium | Yes |
+| **Instagram** | ❌ | ✅ | Hard | Yes |
+| **TikTok** | 🟠 | ✅ | Hard | Yes |
+| **LinkedIn** | ❌ | ✅ | Medium | Yes |
+| **Twitter/X** | ❌ | ✅ | Medium | Yes |
+| **Discord** | ✅* | ✅ | Easy | Yes |
+| **Telegram** | ❌ | ✅ | Easy | Yes |
+| **Kick** | ✅ | ❌ | Easy | No |
+| **Rumble** | ✅ | ❌ | Easy | No |
+| **Odysee** | ✅ | ❌ | Easy | No |
+
+*✅ Full Support | 🟠 Limited | ❌ Not Available | *Voice channel streaming
+
+### Platform Setup Guides
+
+#### Twitch Configuration
+1. Go to [Twitch Developer Console](https://dev.twitch.tv/console)
+2. Create a new application
+3. Get your Client ID and generate access token
+4. Add to `.env`:
+   ```env
+   TWITCH_CLIENT_ID=your_client_id
+   TWITCH_ACCESS_TOKEN=your_access_token
+   TWITCH_STREAM_KEY=your_stream_key
+   ```
+
+#### Discord Bot Setup
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Create new application and bot
+3. Copy bot token and add to `.env`:
+   ```env
+   DISCORD_BOT_TOKEN=your_bot_token
+   DISCORD_GUILD_ID=your_server_id
+   ```
+
+#### Telegram Bot Setup
+1. Message [@BotFather](https://t.me/botfather) on Telegram
+2. Create new bot with `/newbot`
+3. Copy token and add to `.env`:
+   ```env
+   TELEGRAM_BOT_TOKEN=your_bot_token
+   ```
+
+### Chat Features
+
+- 💬 **Real-time Monitoring**: All platform messages in one dashboard
+- 🤖 **AI Responses**: Automated intelligent replies
+- 📈 **Analytics**: Message volume, engagement tracking
+- 🚫 **Moderation**: Spam filtering and user management
+- 🔄 **Cross-platform**: Unified experience across all platforms
+- ⏱️ **Message History**: Persistent chat logs and search
 
 ## 🎮 OBS Studio Setup
 

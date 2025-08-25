@@ -1,0 +1,413 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+    - what's up
+    - yo
+    - hiya
+    - sup
+    - howdy
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+    - catch you later
+    - gotta go
+    - take care
+    - peace out
+    - later
+    - cya
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+    - right
+    - exactly
+    - sure
+    - absolutely
+    - definitely
+    - yep
+    - yeah
+    - ok
+    - okay
+    - true
+    - agreed
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+    - nope
+    - nah
+    - not interested
+    - disagree
+    - incorrect
+    - wrong
+    - false
+    - negative
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+    - excellent
+    - fantastic
+    - awesome
+    - loving this stream
+    - this is great
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+    - stream is lagging
+    - audio issues
+    - can't hear anything
+    - video is freezing
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+    - what are you?
+    - who are you?
+    - are you real?
+    - are you an AI?
+    - what kind of bot are you?
+    - are you automated?
+
+- intent: ask_streaming_status
+  examples: |
+    - is the stream live?
+    - are we streaming?
+    - what's the stream status?
+    - is the broadcast active?
+    - are you streaming right now?
+    - is this live?
+    - stream status
+    - are we live?
+    - check stream status
+    - streaming status
+    - is the streamer online?
+    - are we broadcasting?
+
+- intent: ask_platform_status
+  examples: |
+    - what platforms are we on?
+    - which platforms are streaming?
+    - platform status
+    - what social media platforms?
+    - where are we streaming?
+    - check platforms
+    - which channels are live?
+    - what streaming services?
+    - all platforms status
+    - multistream status
+
+- intent: ask_help
+  examples: |
+    - help
+    - help me
+    - can you help?
+    - I need help
+    - what can you do?
+    - commands
+    - what are the commands?
+    - how can I use this?
+    - what features do you have?
+    - show me the options
+    - assistance
+    - support
+
+- intent: ask_about_stream
+  examples: |
+    - what's this stream about?
+    - what game are you playing?
+    - what's the content?
+    - what are we watching?
+    - stream info
+    - what's happening?
+    - stream details
+    - what's going on?
+    - content information
+    - stream description
+
+- intent: ask_technical_support
+  examples: |
+    - stream is lagging
+    - audio is not working
+    - video quality is bad
+    - I can't hear anything
+    - stream keeps freezing
+    - buffering issues
+    - technical problems
+    - stream quality issues
+    - connection problems
+    - playback issues
+    - video not loading
+    - audio sync issues
+
+- intent: ask_chat_commands
+  examples: |
+    - what commands are available?
+    - chat commands
+    - show commands
+    - command list
+    - what can I type?
+    - available commands
+    - help commands
+    - command help
+
+- intent: ask_viewer_count
+  examples: |
+    - how many viewers?
+    - viewer count
+    - how many people watching?
+    - viewer numbers
+    - audience size
+    - how many are here?
+    - current viewers
+    - viewer stats
+
+- intent: ask_stream_quality
+  examples: |
+    - what's the stream quality?
+    - video quality options
+    - resolution settings
+    - stream resolution
+    - quality settings
+    - video settings
+    - streaming quality
+    - resolution options
+
+- intent: ask_social_media
+  examples: |
+    - social media links
+    - where can I follow?
+    - social accounts
+    - follow links
+    - social networks
+    - other platforms
+    - social media
+    - follow on social
+
+- intent: ask_schedule
+  examples: |
+    - when do you stream?
+    - streaming schedule
+    - when are you live?
+    - stream times
+    - schedule
+    - when do you go live?
+    - streaming hours
+    - broadcast schedule
+
+- intent: compliment_stream
+  examples: |
+    - great stream
+    - love this
+    - awesome content
+    - amazing stream
+    - really enjoying this
+    - fantastic
+    - keep up the good work
+    - loving it
+    - this is great
+    - excellent stream
+    - beautiful setup
+    - nice quality
+
+- intent: report_issue
+  examples: |
+    - there's a problem
+    - report an issue
+    - something's wrong
+    - need to report
+    - issue report
+    - problem with stream
+    - report bug
+    - technical issue
+    - stream problem
+
+- intent: ask_moderator_help
+  examples: |
+    - need a moderator
+    - call a mod
+    - moderator help
+    - need mod assistance
+    - mod help
+    - get a moderator
+    - moderator needed
+
+- intent: request_follow
+  examples: |
+    - please follow
+    - don't forget to follow
+    - hit that follow button
+    - follow for more
+    - subscribe
+    - follow me
+    - support the stream
+
+- intent: chitchat
+  examples: |
+    - how's your day?
+    - what's up?
+    - how are things?
+    - nice weather today
+    - what's new?
+    - how's it going?
+    - anything interesting happening?
+    - tell me something
+    - what do you think?
+
+- intent: out_of_scope
+  examples: |
+    - I want to order food
+    - what's the weather like?
+    - tell me a joke
+    - sing a song
+    - do my homework
+    - what's 2+2?
+    - recommend a restaurant
+    - book a flight
+    - order pizza
+    - call my mom
+
+stories:
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_streaming_status
+  - action: utter_streaming_status
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_technical_support
+  - action: utter_technical_support
+  - intent: affirm
+  - action: utter_affirm
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_mood_unhappy
+  - intent: ask_help
+  - action: utter_help
+
+- story: bot challenge
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- story: platform info
+  steps:
+  - intent: ask_platform_status
+  - action: utter_platform_status
+
+- story: social media request
+  steps:
+  - intent: ask_social_media
+  - action: utter_social_media
+
+- story: help request
+  steps:
+  - intent: ask_help
+  - action: utter_help
+
+- story: compliment
+  steps:
+  - intent: compliment_stream
+  - action: utter_compliment_response
+
+rules:
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Handle out of scope
+  steps:
+  - intent: out_of_scope
+  - action: utter_out_of_scope
+
+- rule: Handle mood great
+  steps:
+  - intent: mood_great
+  - action: utter_mood_great
+
+- rule: Handle mood unhappy
+  steps:
+  - intent: mood_unhappy
+  - action: utter_mood_unhappy

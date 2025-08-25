@@ -10,6 +10,8 @@ const cron = require('node-cron');
 const config = require('./config');
 const logger = require('./utils/logger');
 const multistreamService = require('./services/multistreamService');
+const SocialMediaManager = require('./services/socialMedia/socialMediaManager');
+const RasaChatbotService = require('./services/chatbot/rasaChatbotService');
 
 class MultistreamServer {
   constructor() {
@@ -19,11 +21,20 @@ class MultistreamServer {
     this.nms = null;
     this.activeConnections = new Set();
     
+    // Initialize social media manager and chatbot
+    this.socialMediaManager = new SocialMediaManager(config);
+    this.chatbotService = new RasaChatbotService({
+      rasaApiUrl: process.env.RASA_API_URL,
+      confidenceThreshold: process.env.CHATBOT_CONFIDENCE_THRESHOLD,
+      fallbackMessage: process.env.CHATBOT_FALLBACK_MESSAGE
+    });
+    
     this.setupExpress();
     this.setupWebSocket();
     this.setupRTMPServer();
     this.setupRoutes();
     this.setupHealthCheck();
+    this.setupChatbotIntegration();
   }
 
   setupExpress() {
@@ -85,6 +96,19 @@ class MultistreamServer {
     
     multistreamService.on('streamError', (data) => {
       this.broadcastToClients({ type: 'streamError', data });
+    });
+    
+    // Listen to social media events
+    this.socialMediaManager.on('chatMessage', (data) => {
+      this.broadcastToClients({ type: 'chatMessage', data });
+    });
+    
+    this.socialMediaManager.on('platformConnected', (data) => {
+      this.broadcastToClients({ type: 'platformConnected', data });
+    });
+    
+    this.socialMediaManager.on('platformDisconnected', (data) => {
+      this.broadcastToClients({ type: 'platformDisconnected', data });
     });
   }
 
@@ -282,6 +306,86 @@ class MultistreamServer {
     this.app.get('/', (req, res) => {
       res.sendFile(path.join(__dirname, '../public/index.html'));
     });
+    
+    // Social Media and Chatbot API Routes
+    
+    // Get all platform status
+    this.app.get('/api/social/platforms', (req, res) => {
+      try {
+        const platforms = this.socialMediaManager.getAllPlatformStatus();
+        res.json({ success: true, data: platforms });
+      } catch (error) {
+        logger.error('Error getting platform status', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+    
+    // Send message to specific platform
+    this.app.post('/api/social/platforms/:platform/message', (req, res) => {
+      try {
+        const { platform } = req.params;
+        const { message, options } = req.body;
+        
+        this.socialMediaManager.sendMessageToPlatform(platform, message, options)
+          .then(() => {
+            res.json({ success: true, message: 'Message sent successfully' });
+          })
+          .catch((error) => {
+            res.status(400).json({ success: false, error: error.message });
+          });
+      } catch (error) {
+        logger.error('Error sending message', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+    
+    // Get chat message history
+    this.app.get('/api/chat/history', (req, res) => {
+      try {
+        const limit = parseInt(req.query.limit) || 100;
+        const history = this.socialMediaManager.getMessageHistory(limit);
+        res.json({ success: true, data: history });
+      } catch (error) {
+        logger.error('Error getting chat history', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+    
+    // Get chatbot statistics
+    this.app.get('/api/chatbot/stats', (req, res) => {
+      try {
+        const stats = this.chatbotService.getStatistics();
+        res.json({ success: true, data: stats });
+      } catch (error) {
+        logger.error('Error getting chatbot stats', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+    
+    // Test chatbot with message
+    this.app.post('/api/chatbot/test', (req, res) => {
+      try {
+        const { message } = req.body;
+        const testMessage = {
+          platform: 'test',
+          userId: 'test_user',
+          username: 'Test User',
+          message: message,
+          timestamp: new Date()
+        };
+        
+        this.chatbotService.processMessage(testMessage)
+          .then((response) => {
+            res.json({ success: true, data: response });
+          })
+          .catch((error) => {
+            res.status(400).json({ success: false, error: error.message });
+          });
+      } catch (error) {
+        logger.error('Error testing chatbot', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
 
     // 404 handler
     this.app.use((req, res) => {
@@ -293,6 +397,39 @@ class MultistreamServer {
       logger.error('Express error', error);
       res.status(500).json({ success: false, error: 'Internal server error' });
     });
+  }
+
+  setupChatbotIntegration() {
+    // Connect chatbot service to social media manager
+    this.socialMediaManager.setChatbotService(this.chatbotService);
+    
+    // Listen to chatbot interaction events
+    this.chatbotService.on('interaction', (interaction) => {
+      this.broadcastToClients({ type: 'chatInteraction', data: interaction });
+    });
+    
+    // Initialize services asynchronously
+    this.initializeAsyncServices();
+  }
+  
+  async initializeAsyncServices() {
+    try {
+      // Initialize chatbot service first
+      if (process.env.CHATBOT_ENABLED === 'true') {
+        logger.info('Initializing RASA chatbot service...');
+        await this.chatbotService.initialize(this.socialMediaManager);
+        logger.info('RASA chatbot service initialized successfully');
+      }
+      
+      // Initialize social media manager
+      logger.info('Initializing social media platforms...');
+      await this.socialMediaManager.initialize();
+      logger.info('Social media platforms initialized successfully');
+      
+    } catch (error) {
+      logger.error('Error initializing async services', error);
+      // Continue without chatbot/social media if initialization fails
+    }
   }
 
   setupHealthCheck() {
@@ -351,6 +488,21 @@ class MultistreamServer {
       } else {
         logger.warn('No platforms configured. Please set up your .env file with streaming credentials.');
       }
+      
+      // Log social media and chatbot status
+      const socialPlatforms = this.socialMediaManager.getAllPlatformStatus();
+      const enabledSocialPlatforms = Object.keys(socialPlatforms).filter(p => socialPlatforms[p].config.enabled);
+      
+      if (enabledSocialPlatforms.length > 0) {
+        logger.info(`Social media platforms: ${enabledSocialPlatforms.join(', ')}`);
+      }
+      
+      if (process.env.CHATBOT_ENABLED === 'true') {
+        logger.info('AI Chatbot: Enabled with RASA integration');
+        logger.info('Chatbot will respond to messages across all connected platforms');
+      } else {
+        logger.info('AI Chatbot: Disabled');
+      }
 
     } catch (error) {
       logger.error('Failed to start server', error);
@@ -365,6 +517,22 @@ class MultistreamServer {
     const activeStreams = multistreamService.getAllActiveStreams();
     for (const stream of activeStreams) {
       multistreamService.stopMultistream(stream.streamId);
+    }
+    
+    // Cleanup social media platforms
+    try {
+      await this.socialMediaManager.cleanup();
+      logger.info('Social media platforms cleaned up');
+    } catch (error) {
+      logger.error('Error cleaning up social media platforms', error);
+    }
+    
+    // Shutdown chatbot service
+    try {
+      await this.chatbotService.shutdown();
+      logger.info('Chatbot service shut down');
+    } catch (error) {
+      logger.error('Error shutting down chatbot service', error);
     }
     
     // Close WebSocket connections

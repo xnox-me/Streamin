@@ -1,0 +1,35 @@
+# Configuration for RASA endpoints
+
+# Action server endpoint
+action_endpoint:
+  url: \"http://localhost:5055/webhook\"
+
+# Tracker store configuration
+tracker_store:
+  type: InMemoryTrackerStore
+
+# Event broker configuration (optional)
+event_broker:
+  type: pika
+  url: localhost
+  username: guest
+  password: guest
+  queue: rasa_core_events
+
+# Model server endpoint (optional)
+model_server:
+  url: \"http://localhost:5005/models\"
+  token: null
+  basic_auth: null
+
+# Lock store configuration
+lock_store:
+  type: InMemoryLockStore
+
+# NLU endpoint (if using separate NLU server)
+# nlu_endpoint:
+#   url: \"http://localhost:5000\"
+
+# Core endpoint (if using separate Core server)
+# core_endpoint:
+#   url: \"http://localhost:5005\"
